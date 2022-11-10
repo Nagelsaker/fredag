@@ -51,10 +51,12 @@ if __name__ == "__main__":
     for i in range(vol_iterations):
         time.sleep(20)
         vol -= vol_step
-        sp.volume(vol, device_id)
+        sp.volume(int(vol), device_id)
 
     # Playing loop
     start_time = time.time()
     while(time.time() - start_time < T):
         time.sleep(5)
+    
+    sp.pause_playback(device_id)
     
