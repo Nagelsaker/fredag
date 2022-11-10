@@ -1,15 +1,8 @@
 import spotipy
 import time
+import schedule
 from spotipy.oauth2 import SpotifyOAuth
 
-# Global parameters
-vol = 70
-end_vol = 20
-vol_iterations = 4
-T  = 15*60
-client_id = "c7eac290d7054303b0455309eff628c2" # SPOTIPY_CLIENT_ID 
-client_secret = "a0e85f57c39e4d2aa74dcc3724ec3db1" # SPOTIPY_CLIENT_SECRET 
-redirect_uri = "https://localhost:8888/callback/" # SPOTIPY_REDIRECT_URI
 
 '''
 Windows:
@@ -18,8 +11,15 @@ Windows:
     set SPOTIPY_REDIRECT_URI=https://localhost:8888/callback/
 
 '''
-if __name__ == "__main__":
-    
+
+def fredag():
+    vol = 100
+    end_vol = 30
+    vol_iterations = 8
+    T  = 25*60
+    client_id = "c7eac290d7054303b0455309eff628c2" # SPOTIPY_CLIENT_ID 
+    client_secret = "a0e85f57c39e4d2aa74dcc3724ec3db1" # SPOTIPY_CLIENT_SECRET 
+    redirect_uri = "https://localhost:8888/callback/" # SPOTIPY_REDIRECT_URI
     scope = ["user-read-playback-state", "user-modify-playback-state", "user-read-currently-playing"]
     auth_manager = SpotifyOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri, show_dialog=True, scope=scope)
     sp = spotipy.Spotify(auth_manager=auth_manager)
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     # Adjust volume slowly
     vol_step = (vol - end_vol)/vol_iterations
     for i in range(vol_iterations):
-        time.sleep(20)
+        time.sleep(30)
         vol -= vol_step
         sp.volume(int(vol), device_id)
 
@@ -59,4 +59,15 @@ if __name__ == "__main__":
         time.sleep(5)
     
     sp.pause_playback(device_id)
-    
+
+def job():
+    print("It's friday!")
+    fredag()
+
+if __name__ == "__main__":
+    schedule.every().friday.at("07:15").do(job)
+    #schedule.every(5).minutes.do(job)
+    while True:
+        schedule.run_pending()
+        time.sleep(20)
+    	
